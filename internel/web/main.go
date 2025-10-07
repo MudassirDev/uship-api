@@ -23,7 +23,7 @@ func CreateMux(apiKey, host, env, pickupCountry, pickupZip, pickupType string) h
 		PickupType:    pickupType,
 	}
 
-	mux.HandleFunc("/getrates", apiCfg.getRates)
+	mux.HandleFunc("POST /getrates", apiCfg.getRates)
 
 	return applyCors(mux, host)
 }

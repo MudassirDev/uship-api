@@ -5,26 +5,33 @@ import (
 	"net/http"
 )
 
-func CreateMux(apiKey string) http.Handler {
+var (
+	ENV           string
+	isDevelopment bool
+)
+
+func CreateMux(apiKey, host, env, pickupCountry, pickupZip, pickupType string) http.Handler {
+	ENV = env
+	isDevelopment = env == "development"
+
 	mux := http.NewServeMux()
 	apiCfg := apiConfig{
-		APIKey:  apiKey,
-		BaseURL: "https://api.ushipsandbox.com",
+		APIKey:        apiKey,
+		BaseURL:       "https://api.ushipsandbox.com",
+		PickupCountry: pickupCountry,
+		PickupZip:     pickupZip,
+		PickupType:    pickupType,
 	}
 
 	mux.HandleFunc("/getrates", apiCfg.getRates)
 
-	return applyCors(mux)
+	return applyCors(mux, host)
 }
 
-func applyCors(mux *http.ServeMux) http.Handler {
+func applyCors(mux *http.ServeMux, host string) http.Handler {
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"https://www.mystore.com"}, // Use your exact domain with scheme
-		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
-		AllowedHeaders:   []string{"Authorization", "Content-Type"}, // Adjust as needed
-		ExposedHeaders:   []string{"Content-Length"},                // Optional: expose only what's necessary
-		AllowCredentials: true,                                      // Only allow if your frontend needs credentials (cookies, auth headers)
-		MaxAge:           86400,                                     // Cache preflight response for 24 hours
+		AllowedOrigins: []string{host},
+		MaxAge:         86400,
 	})
 
 	handler := c.Handler(mux)

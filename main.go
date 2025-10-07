@@ -26,9 +26,24 @@ func init() {
 	apiKey := os.Getenv("API_KEY")
 	validateEnv(apiKey, "API_KEY")
 
+	host := os.Getenv("HOST")
+	validateEnv(host, "HOST")
+
+	env := os.Getenv("ENV")
+	validateEnv(env, "ENV")
+
+	pickupCountry := os.Getenv("PICKUP_COUNTRY")
+	validateEnv(pickupCountry, "PICKUP_COUNTRY")
+
+	pickupZip := os.Getenv("PICKUP_ZIP")
+	validateEnv(pickupZip, "PICKUP_ZIP")
+
+	pickupType := os.Getenv("PICKUP_TYPE")
+	validateEnv(pickupType, "PICKUP_TYPE")
+
 	log.Println("envs loaded")
 
-	handler := web.CreateMux(apiKey)
+	handler := web.CreateMux(apiKey, host, env, pickupCountry, pickupZip, pickupType)
 	HANDLER = handler
 }
 

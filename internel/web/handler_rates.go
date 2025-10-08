@@ -71,7 +71,17 @@ func (apiCfg *apiConfig) getRates(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, err, "failed to create rates")
 		return
 	}
+
+	decoder = json.NewDecoder(res.Body)
+	defer res.Body.Close()
+
+	var response any
+
+	if err := decoder.Decode(&response); err != nil {
+	}
+
 	log.Println(res)
+	log.Println(response)
 }
 
 func createPayload(requestStruct *RateRequestStruct, pickupAddress *RouteAddress) (*bytes.Buffer, error) {

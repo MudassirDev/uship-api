@@ -14,7 +14,7 @@ type RateRequestBody struct {
 }
 
 type Route struct {
-	RouteItems []RouteItem `json:"routeItems"`
+	RouteItems []RouteItem `json:"items"`
 }
 
 type RouteItem struct {

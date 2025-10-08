@@ -1,8 +1,9 @@
 package web
 
 import (
-	"github.com/rs/cors"
 	"net/http"
+
+	"github.com/rs/cors"
 )
 
 var (
@@ -21,6 +22,9 @@ func CreateMux(apiKey, host, env, pickupCountry, pickupZip, pickupType string) h
 		PickupCountry: pickupCountry,
 		PickupZip:     pickupZip,
 		PickupType:    pickupType,
+	}
+	if !isDevelopment {
+		apiCfg.BaseURL = "https://api.uship.com"
 	}
 
 	mux.HandleFunc("POST /getrates", apiCfg.getRates)

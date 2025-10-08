@@ -7,7 +7,7 @@ import (
 )
 
 func respondWithError(w http.ResponseWriter, code int, err error, message string) {
-	log.Printf("error while processin request: %v\n", err)
+	log.Printf("error while processing request: %v\n", err)
 
 	respondWithJSON(w, code, struct {
 		Msg string `json:"msg"`

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 )
 
@@ -78,10 +77,16 @@ func (apiCfg *apiConfig) getRates(w http.ResponseWriter, r *http.Request) {
 	var response any
 
 	if err := decoder.Decode(&response); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err, "failed to create rates")
+		return
 	}
 
-	log.Println(res)
-	log.Println(response)
+	if res.StatusCode != 201 {
+		respondWithError(w, http.StatusInternalServerError, fmt.Errorf("reponse: %v, res %v", response, res), "failed to create rates")
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, response)
 }
 
 func createPayload(requestStruct *RateRequestStruct, pickupAddress *RouteAddress) (*bytes.Buffer, error) {
@@ -96,7 +101,7 @@ func createPayload(requestStruct *RateRequestStruct, pickupAddress *RouteAddress
 			},
 			{
 				Address:      requestStruct.RouteAddress,
-				Accessorials: []string{"Inside", "LiftgateRequired"},
+				Accessorials: []string{"LiftgateRequired"},
 			},
 		},
 	}

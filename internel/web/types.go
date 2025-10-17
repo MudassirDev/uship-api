@@ -18,8 +18,15 @@ type Route struct {
 }
 
 type RouteItem struct {
-	Accessorials []string     `json:"accessorials,omitempty"`
-	Address      RouteAddress `json:"address"`
+	Accessorials   []string     `json:"accessorials,omitempty"`
+	Address        RouteAddress `json:"address"`
+	TimeFrameValue *TimeFrame    `json:"timeFrame,omitempty"`
+}
+
+type TimeFrame struct {
+	EarliestArrival string `json:"earliestArrival"`
+	LatestArrival   string `json:"latestArrival"`
+	TimeFrameType   string `json:"timeFrameType"`
 }
 
 type RouteAddress struct {

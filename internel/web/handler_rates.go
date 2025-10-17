@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"time"
 )
 
 var validAddressTypes = map[string]struct{}{
@@ -70,34 +72,66 @@ func (apiCfg *apiConfig) getRates(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, err, "failed to create rates")
 		return
 	}
-
-	decoder = json.NewDecoder(res.Body)
 	defer res.Body.Close()
 
-	var response any
-
-	if err := decoder.Decode(&response); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err, "failed to create rates")
+	data, err := io.ReadAll(res.Body)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err, "error while decoding response")
 		return
 	}
 
 	if res.StatusCode != 201 {
-		respondWithError(w, http.StatusInternalServerError, fmt.Errorf("reponse: %v, res %v", response, res), "failed to create rates")
+		respondWithError(w, http.StatusInternalServerError, fmt.Errorf("reponse: %v, res %v", string(data), res), "failed to create rates")
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, response)
+	rates, err := apiCfg.fetchRates(res.Header.Get("location"))
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err, "failed to fetch rates")
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, rates)
+}
+
+func (apiCfg *apiConfig) fetchRates(url string) (any, error) {
+	request, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	apiCfg.setHeaders(request)
+
+	res, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return nil, err
+	}
+
+	var response any
+	decoder := json.NewDecoder(res.Body)
+	defer res.Body.Close()
+
+	if err := decoder.Decode(&response); err != nil {
+		return nil, err
+	}
+
+	return response, nil
 }
 
 func createPayload(requestStruct *RateRequestStruct, pickupAddress *RouteAddress) (*bytes.Buffer, error) {
 	data := RateRequestBody{
 		Items: requestStruct.Items,
 	}
+	futureDate := time.Now().AddDate(0, 1, 0).Format("2006/01/02")
 
 	route := Route{
 		RouteItems: []RouteItem{
 			{
 				Address: *pickupAddress,
+				TimeFrameValue: &TimeFrame{
+					EarliestArrival: futureDate,
+					LatestArrival: futureDate,
+					TimeFrameType: "on",
+				},
 			},
 			{
 				Address:      requestStruct.RouteAddress,
@@ -107,7 +141,7 @@ func createPayload(requestStruct *RateRequestStruct, pickupAddress *RouteAddress
 	}
 	data.Route = route
 
-	payload, err := json.Marshal(data)
+	payload, err := json.MarshalIndent(data, "", "")
 	if err != nil {
 		return nil, err
 	}

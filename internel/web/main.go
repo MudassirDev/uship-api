@@ -27,7 +27,8 @@ func CreateMux(apiKey, host, env, pickupCountry, pickupZip, pickupType string) h
 		apiCfg.BaseURL = "https://api.uship.com"
 	}
 
-	mux.HandleFunc("POST /getrates", apiCfg.getRates)
+	mux.HandleFunc("POST /get-rates", apiCfg.getRates)
+	mux.HandleFunc("POST /get-furniture-rates", apiCfg.getFurnitureRates)
 
 	return applyCors(mux, host)
 }

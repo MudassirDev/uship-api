@@ -20,7 +20,7 @@ type Route struct {
 type RouteItem struct {
 	Accessorials   []string     `json:"accessorials,omitempty"`
 	Address        RouteAddress `json:"address"`
-	TimeFrameValue *TimeFrame    `json:"timeFrame,omitempty"`
+	TimeFrameValue *TimeFrame   `json:"timeFrame,omitempty"`
 }
 
 type TimeFrame struct {
@@ -47,5 +47,20 @@ type LtlItem struct {
 	LengthInMeters float64 `json:"lengthInMeters"`
 	Hazardous      bool    `json:"hazardous"`
 	Stackable      bool    `json:"stackable"`
+	UnitCount      int     `json:"unitCount"`
+}
+
+type FurnitureRequestBody struct {
+	DestinationPostalCode string          `json:"destinationPostalCode"`
+	OriginPostalCode      string          `json:"originPostalCode"`
+	Source                string          `json:"source"`
+	Items                 []FurnitureItem `json:"items"`
+}
+
+type FurnitureItem struct {
+	HeightInMeters float64 `json:"heightInMeters"`
+	LengthInMeters float64 `json:"lengthInMeters"`
+	WeightInGrams  float64 `json:"weightInGrams"`
+	WidthInMeters  float64 `json:"widthInMeters"`
 	UnitCount      int     `json:"unitCount"`
 }

@@ -54,7 +54,7 @@ func (apiCfg *apiConfig) getRates(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, fmt.Errorf("invalid payload"), "invalid payload")
 		return
 	}
-	endpoint := fmt.Sprintf("%v/v2/raterequests?development=%v", apiCfg.BaseURL, ENV)
+	endpoint := fmt.Sprintf("%v/v2/raterequests", apiCfg.BaseURL)
 
 	payload, err := createPayload(&request, &pickupAddress)
 	if err != nil {
@@ -85,6 +85,7 @@ func (apiCfg *apiConfig) getRates(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	time.Sleep(2 * time.Second)
 	rates, err := apiCfg.fetchRates(res.Header.Get("location"))
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err, "failed to fetch rates")
@@ -95,11 +96,12 @@ func (apiCfg *apiConfig) getRates(w http.ResponseWriter, r *http.Request) {
 }
 
 func (apiCfg *apiConfig) fetchRates(url string) (any, error) {
+	fmt.Println(url)
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
-	apiCfg.setHeaders(request)
+	request.Header.Add("Authorization", fmt.Sprintf("Bearer %v", apiCfg.APIKey))
 
 	res, err := http.DefaultClient.Do(request)
 	if err != nil {
@@ -129,8 +131,8 @@ func createPayload(requestStruct *RateRequestStruct, pickupAddress *RouteAddress
 				Address: *pickupAddress,
 				TimeFrameValue: &TimeFrame{
 					EarliestArrival: futureDate,
-					LatestArrival: futureDate,
-					TimeFrameType: "on",
+					LatestArrival:   futureDate,
+					TimeFrameType:   "on",
 				},
 			},
 			{

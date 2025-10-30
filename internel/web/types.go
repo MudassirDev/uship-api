@@ -66,10 +66,25 @@ type FurnitureItem struct {
 	WidthInMeters  float64 `json:"widthInMeters"`
 	UnitCount      int     `json:"unitCount"`
 }
-
+type ShopifyOrder struct {
+	DraftOrder ShopifyDraftOrder `json:"draft_order"`
+}
+type ShopifyDraftOrder struct {
+	LineItems       []CartItem             `json:"line_items"`
+	ShippingLine    ShopifyShippingLine    `json:"shipping_line"`
+	ShippingAddress ShopifyShippingAddress `json:"shipping_address"`
+}
+type ShopifyShippingAddress struct {
+	Country string `json:"country"`
+	Zip     string `json:"zip"`
+}
+type ShopifyShippingLine struct {
+	Title string `json:"title"`
+	Price string `json:"price"`
+}
 type CartItem struct {
 	Quantity   int                `json:"quantity"`
-	VariantID  int                `json:"variantID"`
+	VariantID  int                `json:"variant_id"`
 	Properties []CartItemProperty `json:"properties"`
 }
 

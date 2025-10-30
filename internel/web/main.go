@@ -22,6 +22,8 @@ func CreateMux(apiKey, host, env, pickupCountry, pickupZip, pickupType, shopifyD
 		PickupCountry: pickupCountry,
 		PickupZip:     pickupZip,
 		PickupType:    pickupType,
+		ShopifyDomain: shopifyDomain,
+		ShopifyAccessToken: shopifyAccessToken,
 	}
 	if !isDevelopment {
 		apiCfg.BaseURL = "https://api.uship.com"

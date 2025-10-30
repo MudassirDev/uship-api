@@ -41,9 +41,24 @@ func init() {
 	pickupType := os.Getenv("PICKUP_TYPE")
 	validateEnv(pickupType, "PICKUP_TYPE")
 
+	shopifyAccessToken := os.Getenv("SHOPIFY_ACCESS_TOKEN")
+	validateEnv(shopifyAccessToken, "SHOPIFY_ACCESS_TOKEN")
+
+	shopifyDomain := os.Getenv("SHOPIFY_DOMAIN")
+	validateEnv(shopifyDomain, "SHOPIFY_DOMAIN")
+
 	log.Println("envs loaded")
 
-	handler := web.CreateMux(apiKey, host, env, pickupCountry, pickupZip, pickupType)
+	handler := web.CreateMux(
+		apiKey,
+		host,
+		env,
+		pickupCountry,
+		pickupZip,
+		pickupType,
+		shopifyDomain,
+		shopifyAccessToken,
+	)
 	HANDLER = handler
 }
 

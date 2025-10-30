@@ -11,7 +11,7 @@ var (
 	isDevelopment bool
 )
 
-func CreateMux(apiKey, host, env, pickupCountry, pickupZip, pickupType string) http.Handler {
+func CreateMux(apiKey, host, env, pickupCountry, pickupZip, pickupType, shopifyDomain, shopifyAccessToken string) http.Handler {
 	ENV = env
 	isDevelopment = env == "development"
 
@@ -29,6 +29,7 @@ func CreateMux(apiKey, host, env, pickupCountry, pickupZip, pickupType string) h
 
 	mux.HandleFunc("POST /get-rates", apiCfg.getRates)
 	mux.HandleFunc("POST /get-furniture-rates", apiCfg.getFurnitureRates)
+	mux.HandleFunc("POST /get-checkout-url", apiCfg.handlerCheckout)
 
 	return applyCors(mux, host)
 }

@@ -1,11 +1,13 @@
 package web
 
 type apiConfig struct {
-	APIKey        string
-	BaseURL       string
-	PickupCountry string
-	PickupZip     string
-	PickupType    string
+	APIKey             string
+	BaseURL            string
+	PickupCountry      string
+	PickupZip          string
+	PickupType         string
+	ShopifyDomain      string
+	ShopifyAccessToken string
 }
 
 type RateRequestBody struct {
@@ -63,4 +65,15 @@ type FurnitureItem struct {
 	WeightInGrams  float64 `json:"weightInGrams"`
 	WidthInMeters  float64 `json:"widthInMeters"`
 	UnitCount      int     `json:"unitCount"`
+}
+
+type CartItem struct {
+	Quantity   int                `json:"quantity"`
+	VariantID  int                `json:"variantID"`
+	Properties []CartItemProperty `json:"properties"`
+}
+
+type CartItemProperty struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
 }

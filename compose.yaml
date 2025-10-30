@@ -1,0 +1,20 @@
+services:
+  app:
+    image: your-dockerhub-username/your-app:latest
+    container_name: go-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      - PORT=${PORT}
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 30 go-app
+

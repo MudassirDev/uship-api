@@ -2,7 +2,7 @@ run:
 	./out
 
 build:
-	go build -o out
+	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o out .
 
 dev:
 	air
